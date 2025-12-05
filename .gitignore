@@ -1,0 +1,20 @@
+# Virtual environment
+.venv/
+venv/
+
+# PyCharm project files
+.idea/
+
+# Environment variables / secrets
+.env
+
+# Logs
+*.log
+
+# __pycache__ and bytecode
+__pycache__/
+*.pyc
+
+# Windows junk files
+Thumbs.db
+Desktop.ini
