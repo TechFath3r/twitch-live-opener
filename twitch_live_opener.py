@@ -135,16 +135,23 @@ def is_streamer_live(cfg: Config, token: str) -> bool:
 
 # ------------- TRAY ICON -------------
 
-def create_tray_image() -> Image.Image:
-    """Create a simple tray icon image (purple dot in a circle)."""
-    size = 64
-    image = Image.new("RGB", (size, size), (40, 40, 40))
-    draw = ImageDraw.Draw(image)
-    # Outer circle
-    draw.ellipse((8, 8, size - 8, size - 8), fill=(128, 0, 200))
-    # Inner dot
-    draw.ellipse((24, 24, size - 24, size - 24), fill=(255, 255, 255))
-    return image
+# def create_tray_image() -> Image.Image:
+#     """Create a simple tray icon image (purple dot in a circle)."""
+#     size = 64
+#     image = Image.new("RGB", (size, size), (40, 40, 40))
+#     draw = ImageDraw.Draw(image)
+#     # Outer circle
+#     draw.ellipse((8, 8, size - 8, size - 8), fill=(128, 0, 200))
+#     # Inner dot
+#     draw.ellipse((24, 24, size - 24, size - 24), fill=(255, 255, 255))
+#     return image
+
+def load_tray_icon():
+    """Load PNG icon from the project folder."""
+    icon_path = BASE_DIR / "favicon.ico"
+    if not icon_path.exists():
+        logger.warning("Tray icon file missing: favicon.ico")
+    return Image.open(icon_path)
 
 
 def on_quit(icon, item):
@@ -156,21 +163,36 @@ def on_quit(icon, item):
     icon.stop()
 
 
+# def start_tray_icon():
+#     """Run the system tray icon event loop."""
+#     image = create_tray_image()
+#     menu = pystray.Menu(
+#         pystray.MenuItem("Quit", on_quit)
+#     )
+#     icon = pystray.Icon(
+#         "TwitchWatcher",
+#         image,
+#         f"Twitch Watcher - {os.environ.get('TWITCH_STREAMER_LOGIN', '')}",
+#         menu,
+#     )
+#     logger.info("Starting system tray icon.")
+#     icon.run()
+#     logger.info("Tray icon loop ended.")
+
 def start_tray_icon():
-    """Run the system tray icon event loop."""
-    image = create_tray_image()
-    menu = pystray.Menu(
-        pystray.MenuItem("Quit", on_quit)
-    )
+    image = load_tray_icon()
+    menu = pystray.Menu(pystray.MenuItem("Quit", on_quit))
+
     icon = pystray.Icon(
         "TwitchWatcher",
         image,
         f"Twitch Watcher - {os.environ.get('TWITCH_STREAMER_LOGIN', '')}",
         menu,
     )
+
     logger.info("Starting system tray icon.")
     icon.run()
-    logger.info("Tray icon loop ended.")
+
 
 
 # ------------- MAIN WATCH LOOP -------------
